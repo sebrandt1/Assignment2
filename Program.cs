@@ -18,7 +18,6 @@ namespace Assignment_2
         {
             if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(category) && price > 0)
             {
-                Console.WriteLine("Passed");
                 Name = name;
                 Category = category;
                 Price = price;
