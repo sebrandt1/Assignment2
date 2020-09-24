@@ -70,6 +70,7 @@ namespace Assignment_2
             }
 
             TotalExpenses.Remove(toRemove);
+
             Console.Clear();
             Console.WriteLine($"{toRemove.Name} was removed from expenses and {toRemove.Price} was subtracted from total sum.");
         }
@@ -148,6 +149,7 @@ namespace Assignment_2
             List<Expense> items = new List<Expense>();
 
             Console.Clear();
+
             void PrintExpense(Expense expense)
             {
                 Console.WriteLine($"[Category: {expense.Category}]");
@@ -197,7 +199,6 @@ namespace Assignment_2
             }
 
             int selected = Program.ShowMenu("Select an item to remove.", items);
-
             RemoveExpense(exp[selected]);
         }
     }
@@ -220,8 +221,7 @@ namespace Assignment_2
                     "[Remove All Expenses]",
                     "[Exit]",
                     });
-
-
+                
                 switch (selected)
                 {
                     case 0:
@@ -252,7 +252,6 @@ namespace Assignment_2
                     default:
                         break;
                 }
-
             }
             Console.ReadKey();
             Console.WriteLine("Hello!");
