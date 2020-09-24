@@ -254,7 +254,6 @@ namespace Assignment_2
                 }
             }
             Console.ReadKey();
-            Console.WriteLine("Hello!");
         }
 
         // Don't change this method.
