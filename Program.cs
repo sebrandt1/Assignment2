@@ -4,17 +4,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-/*
-    Skriv ett interaktivt konsolprogram som låter användaren hålla koll på sina utgifter (expenses). Programmet ska innehålla följande funktionalitet:
-
-    Lägga till utgifter
-    Varje utgift består av namn, pris och kategori (Food, Entertainment eller Other)
-    Visa alla utgifter och totalsumman av dessa utgifter
-    Visa totalsumman av alla utgifter per kategori
-    Ta bort en specifik utgift
-    Ta bort alla utgifter
-
- */
 namespace Assignment_2
 {
     public class Expense
@@ -23,9 +12,8 @@ namespace Assignment_2
         public string Category { get; set; }
         public decimal Price { get; set; }
         public static List<Expense> TotalExpenses = new List<Expense>();
-
-
-        //Constructor for our Expense class where we set our instance properties
+        
+        //Constructor for our Expense class where we set our instance properties and add the created instance to the static total list
         public Expense(string name, string category, decimal price)
         {
             Name = name;
@@ -34,6 +22,10 @@ namespace Assignment_2
             TotalExpenses.Add(this);
         }
 
+        /// <summary>
+        /// If argument #2 is empty on call, we want to return the total sum of ALL expenses.
+        /// If argument #2 contains a specified category we want to return the sum of all expenses of that single category.
+        /// </summary>
         public static decimal SumExpenses(List<Expense> expenses, string category = null)
         {
             decimal sum = 0;
@@ -58,17 +50,28 @@ namespace Assignment_2
             return sum;
         }
         
+        /// <summary>
+        /// If argument is empty we should clear all expenses from our list.
+        /// If argument contains an expense instance we should removed that specified instance alone from our total list.
+        /// </summary>
         public static void RemoveExpense(Expense toRemove = null)
         {
             if (toRemove == null)
             {
                 TotalExpenses.Clear();
+                Console.Clear();
+                Console.WriteLine("All entries were removed.");
                 return;
             }
 
             TotalExpenses.Remove(toRemove);
+            Console.Clear();
+            Console.WriteLine($"{toRemove.Name} was removed from expenses and {toRemove.Price} was subtracted from total sum.");
         }
 
+        /// <summary>
+        /// Create and print our menu for adding an expense to our total list.
+        /// </summary>
         public static void AddExpenseMenu()
         {
             string[] expenseMenu =
@@ -88,6 +91,8 @@ namespace Assignment_2
 
             decimal.TryParse(Console.ReadLine(), out price);
 
+            //We declared price as -1, if price is still -1 by this point we can assume that our TryParse failed for whatever reason
+            //Since an expense cannot be a negative value (that would be an income) we want to return here and skip the rest of the method
             if (price == -1) return;
 
             string category = CategoryMenu();
@@ -97,6 +102,9 @@ namespace Assignment_2
             Console.WriteLine($"Added expense: {name} with price {price} and category {category}");
         }
 
+        /// <summary>
+        /// Create and print our Category selection menu and return the selected value as string (so we know what category was selected).
+        /// </summary>
         public static string CategoryMenu()
         {
             int selected = Program.ShowMenu("Category: ", new string[]
@@ -117,6 +125,8 @@ namespace Assignment_2
                 case 2:
                     return "Other";
 
+                    //There are only 3 possible values since we only input 3 indexes
+                    //But if for some reason some kind of programming voodoo happens we want to default it to something
                 default:
                     return "Invalid Option.";
             }
@@ -139,8 +149,8 @@ namespace Assignment_2
                 items.Add(expense);
             }
 
-            if (category != null)
-            {
+            if (category != null || TotalExpenses.Count == 0) //if count is = 0 we want to print that there are no expenses
+            {                                                 //this will happen after sum of 0 expense objects is calculated below the for loop
                 for (int i = 0; i < TotalExpenses.Count; i++)
                 {
                     if (TotalExpenses[i].Category == category)
@@ -151,7 +161,8 @@ namespace Assignment_2
 
                 decimal sum = SumExpenses(TotalExpenses, category);
                 string message = sum != 0 ? $"Total sum of expenses for category: {category}: {sum}" : "You have no expenses.";
-                Console.WriteLine(message);            }
+                Console.WriteLine(message);
+            }
             else
             {
                 for (int i = 0; i < TotalExpenses.Count; i++)
@@ -167,10 +178,13 @@ namespace Assignment_2
         {
             Console.Clear();
             Expense[] exp = ShowExpenses();
+            //Initialize a string array of the same size as our expense array
             string[] items = new string[exp.Length];
 
             for(int i = 0; i < exp.Length; i++)
             {
+                //Create a string in the items array at the equivalent index of the expense
+                //So we can use this in our ShowMenu call (since it only accepts string arrays as parameter).
                 items[i] = ($"[Name: {exp[i].Name}, [Price: {exp[i].Price}]");
             }
 
