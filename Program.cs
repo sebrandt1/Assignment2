@@ -16,10 +16,16 @@ namespace Assignment_2
         //Constructor for our Expense class where we set our instance properties and add the created instance to the static total list
         public Expense(string name, string category, decimal price)
         {
-            Name = name;
-            Category = category;
-            Price = price;
-            TotalExpenses.Add(this);
+            if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(category) && price > 0)
+            {
+                Console.WriteLine("Passed");
+                Name = name;
+                Category = category;
+                Price = price;
+                TotalExpenses.Add(this);
+                return;
+            }
+            Console.WriteLine("One of more values were empty when trying to create expense, try again.");
         }
 
         /// <summary>
@@ -90,16 +96,19 @@ namespace Assignment_2
             Console.Write("Price: ");
 
             decimal.TryParse(Console.ReadLine(), out price);
-
-            //We declared price as -1, if price is still -1 by this point we can assume that our TryParse failed for whatever reason
-            //Since an expense cannot be a negative value (that would be an income) we want to return here and skip the rest of the method
-            if (price == -1) return;
+            
+            //Since an expense cannot be a negative value (that would be an income) we want to return here and skip the rest of the method if its negative
+            if (price < 0)
+            {
+                Console.WriteLine($"Price was {price}, will not add to list.");
+                return;
+            }
 
             string category = CategoryMenu();
 
-            Expense exp = new Expense(name, category, price);
             Console.Clear();
-            Console.WriteLine($"Added expense: {name} with price {price} and category {category}");
+            Expense exp = new Expense(name, category, price);
+            //Console.WriteLine($"Added expense: {name} with price {price} and category {category}");
         }
 
         /// <summary>
