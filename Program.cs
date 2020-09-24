@@ -5,10 +5,10 @@ using System.Globalization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 /*
-    Skriv ett interaktivt konsolprogram som låter användaren hålla koll på sina utgifter (expenses). Programmet ska innehålla följande funktionalitet:
+    Skriv ett interaktivt konsolprogram som lÃ¥ter anvÃ¤ndaren hÃ¥lla koll pÃ¥ sina utgifter (expenses). Programmet ska innehÃ¥lla fÃ¶ljande funktionalitet:
 
-    Lägga till utgifter
-    Varje utgift består av namn, pris och kategori (Food, Entertainment eller Other)
+    LÃ¤gga till utgifter
+    Varje utgift bestÃ¥r av namn, pris och kategori (Food, Entertainment eller Other)
     Visa alla utgifter och totalsumman av dessa utgifter
     Visa totalsumman av alla utgifter per kategori
     Ta bort en specifik utgift
@@ -22,7 +22,7 @@ namespace Assignment_2
         public string Name { get; set; }
         public string Category { get; set; }
         public decimal Price { get; set; }
-        public static List<Expense> expenses = new List<Expense>();
+        public static List<Expense> TotalExpenses = new List<Expense>();
 
 
         //Constructor for our Expense class where we set our instance properties
@@ -31,12 +31,13 @@ namespace Assignment_2
             Name = name;
             Category = category;
             Price = price;
-            expenses.Add(this);
+            TotalExpenses.Add(this);
         }
 
         public static decimal SumExpenses(List<Expense> expenses, string category = null)
         {
             decimal sum = 0;
+
             if(category != null)
             {
                 for(int i = 0; i < expenses.Count; i++)
@@ -61,11 +62,11 @@ namespace Assignment_2
         {
             if (toRemove == null)
             {
-                expenses.Clear();
+                TotalExpenses.Clear();
                 return;
             }
 
-            expenses.Remove(toRemove);
+            TotalExpenses.Remove(toRemove);
         }
 
         public static void AddExpenseMenu()
@@ -124,50 +125,58 @@ namespace Assignment_2
         /// <summary>
         /// If no argument is passed, all expenses will be printed.
         /// </summary>
-        public static string[] ShowExpenses(string category = null)
+        public static Expense[] ShowExpenses(string category = null)
         {
-            List<string> items = new List<string>();
+            List<Expense> items = new List<Expense>();
 
             Console.Clear();
-            void Print(Expense expense)
+            void PrintExpense(Expense expense)
             {
                 Console.WriteLine($"[Category: {expense.Category}]");
-                Console.WriteLine($"[Name: {expense.Name}, [Price: {expense.Price}]");
+                Console.WriteLine($"[Name: {expense.Name}, Price: {expense.Price}]");
                 Console.WriteLine();
-                items.Add($"[{expense.Name}, {expense.Price}, {expense.Category}]");
+                //items.Add($"[{expense.Name}, {expense.Price}, {expense.Category}]");
+                items.Add(expense);
             }
 
             if (category != null)
             {
-                for (int i = 0; i < expenses.Count; i++)
+                for (int i = 0; i < TotalExpenses.Count; i++)
                 {
-                    if (expenses[i].Category == category)
+                    if (TotalExpenses[i].Category == category)
                     {
-                        Print(expenses[i]);
+                        PrintExpense(TotalExpenses[i]);
                     }
                 }
-                Console.WriteLine(SumExpenses(expenses, category));
-            }
+
+                decimal sum = SumExpenses(TotalExpenses, category);
+                string message = sum != 0 ? $"Total sum of expenses for category: {category}: {sum}" : "You have no expenses.";
+                Console.WriteLine(message);            }
             else
             {
-                for (int i = 0; i < expenses.Count; i++)
+                for (int i = 0; i < TotalExpenses.Count; i++)
                 {
-                    Print(expenses[i]);
+                    PrintExpense(TotalExpenses[i]);
                 }
-                Console.WriteLine(SumExpenses(expenses, category));
+                Console.WriteLine($"Total expenses: {SumExpenses(TotalExpenses, category)}");
             }
             return items.ToArray();
         }
 
-        public static string ExpenseMenu()
+        public static void ExpenseMenu()
         {
             Console.Clear();
-            string[] exp = ShowExpenses();
-            int selected = Program.ShowMenu("Select an item to remove.", ShowExpenses());
+            Expense[] exp = ShowExpenses();
+            string[] items = new string[exp.Length];
 
-            
+            for(int i = 0; i < exp.Length; i++)
+            {
+                items[i] = ($"[Name: {exp[i].Name}, [Price: {exp[i].Price}]");
+            }
 
-            return string.Empty;
+            int selected = Program.ShowMenu("Select an item to remove.", items);
+
+            RemoveExpense(exp[selected]);
         }
     }
 
@@ -207,10 +216,15 @@ namespace Assignment_2
                         break;
 
                     case 3:
-                        Expense.RemoveExpense();
+                        Expense.ExpenseMenu();
                         break;
 
                     case 4:
+                        Expense.RemoveExpense();
+                        break;
+
+                    case 5:
+                        runMenu = false;
                         break;
 
                     default:
