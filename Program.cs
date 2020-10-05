@@ -11,9 +11,9 @@ namespace Assignment_2
         public string Name { get; set; }
         public string Category { get; set; }
         public decimal Price { get; set; }
-        public static List<Expense> TotalExpenses = new List<Expense>();
+        private static List<Expense> TotalExpenses = new List<Expense>();
         
-        //Constructor for our Expense class where we set our instance properties and add the created instance to the static total list
+        //Constructor for our Expense class where we set our instance properties
         public Expense(string name, string category, decimal price)
         {
             if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(category) && price > 0)
@@ -21,7 +21,6 @@ namespace Assignment_2
                 Name = name;
                 Category = category;
                 Price = price;
-                TotalExpenses.Add(this);
                 return;
             }
             Console.WriteLine("One of more values were empty when trying to create expense, try again.");
@@ -108,6 +107,7 @@ namespace Assignment_2
 
             Console.Clear();
             Expense exp = new Expense(name, category, price);
+            TotalExpenses.Add(exp);
             //Console.WriteLine($"Added expense: {name} with price {price} and category {category}");
         }
 
@@ -144,10 +144,9 @@ namespace Assignment_2
         /// <summary>
         /// If no argument is passed, all expenses will be printed.
         /// </summary>
-        public static Expense[] ShowExpenses(string category = null)
+        /// public static Expense[] => public static void
+        public static void ShowExpenses(string category = null)
         {
-            List<Expense> items = new List<Expense>();
-
             Console.Clear();
 
             void PrintExpense(Expense expense)
@@ -156,7 +155,6 @@ namespace Assignment_2
                 Console.WriteLine($"[Name: {expense.Name}, Price: {expense.Price}]");
                 Console.WriteLine();
                 //items.Add($"[{expense.Name}, {expense.Price}, {expense.Category}]");
-                items.Add(expense);
             }
 
             if (category != null || TotalExpenses.Count == 0) //if count is = 0 we want to print that there are no expenses
@@ -181,25 +179,23 @@ namespace Assignment_2
                 }
                 Console.WriteLine($"Total expenses: {SumExpenses(TotalExpenses, category)}");
             }
-            return items.ToArray();
         }
 
         public static void ExpenseMenu()
         {
             Console.Clear();
-            Expense[] exp = ShowExpenses();
             //Initialize a string array of the same size as our expense array
-            string[] items = new string[exp.Length];
+            string[] items = new string[TotalExpenses.Count];
 
-            for(int i = 0; i < exp.Length; i++)
+            for(int i = 0; i < items.Length; i++)
             {
                 //Create a string in the items array at the equivalent index of the expense
                 //So we can use this in our ShowMenu call (since it only accepts string arrays as parameter).
-                items[i] = ($"[Name: {exp[i].Name}, [Price: {exp[i].Price}]");
+                items[i] = ($"[Name: {TotalExpenses[i].Name}, [Price: {TotalExpenses[i].Price}]");
             }
 
             int selected = Program.ShowMenu("Select an item to remove.", items);
-            RemoveExpense(exp[selected]);
+            RemoveExpense(TotalExpenses[selected]);
         }
     }
 
@@ -246,6 +242,7 @@ namespace Assignment_2
                         break;
 
                     case 5:
+                        Console.WriteLine("Exiting.");
                         runMenu = false;
                         break;
 
