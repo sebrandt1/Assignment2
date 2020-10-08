@@ -114,7 +114,6 @@ namespace Assignment_2
 
             Console.Clear();
             new Expense(name, category, price);
-            //Console.WriteLine($"Added expense: {name} with price {price} and category {category}");
         }
 
         /// <summary>
