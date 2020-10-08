@@ -158,7 +158,6 @@ namespace Assignment_2
                 Console.WriteLine($"[Category: {expense.Category}]");
                 Console.WriteLine($"[Name: {expense.Name}, Price: {expense.Price}]");
                 Console.WriteLine();
-                //items.Add($"[{expense.Name}, {expense.Price}, {expense.Category}]");
             }
 
             if (category != Categories.NONE || TotalExpenses.Count == 0) //if count is = 0 we want to print that there are no expenses
@@ -348,18 +347,20 @@ namespace Assignment_2
             Assert.AreEqual(2658.90M, sum);
             Expense.TotalExpenses.Clear();
         }
+
         [TestMethod]
-        public void SingleIncorrectDeclare()
+        public void IncorrectDeclare()
         {
             // If price is 0 or lower the product does not get added to the Expense list
-            new Expense("Apple", Expense.Categories.Food, -1700);
-            new Expense("Tv", Expense.Categories.Entertainment, 2499.90M);
+            new Expense("", Expense.Categories.Food, -3333M);
+            new Expense("Tv", Expense.Categories.Entertainment, -500M);
             new Expense("Car insurance", Expense.Categories.Other, 1700M);
             decimal sum = Expense.SumExpenses(Expense.TotalExpenses);
 
-            Assert.AreEqual(4199.90M, sum);
+            Assert.AreEqual(1700M, sum);
             Expense.TotalExpenses.Clear();
         }
+
         [TestMethod]
         public void ZeroExpenses()
         {
@@ -372,6 +373,7 @@ namespace Assignment_2
             Assert.AreEqual(0, sum);
             Expense.TotalExpenses.Clear();
         }
+
         [TestMethod]
         public void AddSameExpense()
         {
@@ -385,6 +387,7 @@ namespace Assignment_2
             Assert.AreEqual(7099.70M, sum);
             Expense.TotalExpenses.Clear();
         }
+
         [TestMethod]
         public void MultipleNegativeValues()
         {
@@ -397,6 +400,7 @@ namespace Assignment_2
             Assert.AreEqual(0, sum);
             Expense.TotalExpenses.Clear();
         }
+
         [TestMethod]
         public void TestAllCategories()
         {
